@@ -25,6 +25,22 @@ angular.module("exampleApp")
 	}
 })
 
+.filter("priceCheck", function() {
+	var result = [];
+	return function(data, money) {
+		if (angular.isArray(data) && angular.isNumber(money)) {
+			for(var i = 0; i < data.length; i++) {
+				if (data[i].price >= money) {
+					result.push(data[i]);
+				}
+			}
+			return result;
+		} else {
+			return data;
+		}
+	}
+})
+
 .filter("skip", function() {
 	return function(data, count) {
 		if (angular.isArray(data) && angular.isNumber(count)) {
