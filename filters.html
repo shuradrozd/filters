@@ -23,8 +23,27 @@
 				var now = new Date();
 				return now.setDate(now.getDate() + days);
 			}
+
+			$scope.limitVal = 5;
+
+			$scope.limitRange = [];
+			for(var i = (0 - $scope.products.length); i <= $scope.products.length; i++) {
+				$scope.limitRange.push(i.toString()); 
+			}
+
+			$scope.selectedItems = function(item) {
+				return item.category == "Fish" || item.name == "Beer";
+			}
+
+			$scope.myCustomOrder = function(item) {
+				return item.expiry < 5 ? 0 : item.price;
+			}
 		});
+
+		
+
 	</script>
+	<script src="customFilters.js"></script>
 </head>
 <body ng-controller="defaultCtrl">
 	<div class="panel panel-default">
@@ -33,8 +52,12 @@
 				Product
 				<span class="label label-primary">{{products.length}}</span>
 			</h3>
-			
+		
 		</div>
+
+		<div class="panel-body">
+			Limit: <select ng-options="item for item in limitRange" ng-model="limitVal"></select>
+		</div>		
 		<div class="panel-body">
 			<table class="table table-striped table-bordered table-considered">
 				<thead>
@@ -48,10 +71,10 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="p in products">
+					<tr ng-repeat="p in products | orderBy: [selectedItems, '-price'] | limitTo: limitVal">
 						<td>{{$index + 1}}</td>
-						<td>{{p.name}}</td>
-						<td>{{p.category}}</td>
+						<td>{{p.name | myFilter}}</td>
+						<td>{{p.category | labelCase: true}}</td>
 						<td>{{getExpiryDate(p.expiry) | date:"dd/MM/yyyy"}}</td>
 						<td class="text-right">{{p.price | currency}}</td>
 					</tr>
